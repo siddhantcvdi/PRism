@@ -1,13 +1,12 @@
 import { getAuth } from "@clerk/express";
 import User from "../models/user.model.js";
 import axios from "axios";
-import { encrypt,decrypt } from "../utils/crypto.js"; // Assuming you have an encrypt function
+import { encrypt } from "../utils/crypto.js"; // Assuming you have an encrypt function
 
 const githubCallback = async (req, res) => {
   const code = req.query.code;
 
   try {
-
     const tokenRes = await axios.post(
       "https://github.com/login/oauth/access_token",
       {
@@ -50,12 +49,14 @@ const githubCallback = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    res.json({ message: "User authenticated and saved", encryptedToken, user });
+    const redirectUrl = `http://localhost:5173/dashboard`;
+    return res.redirect(redirectUrl);
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: "GitHub OAuth failed" });
   }
 };
+
 const loginUser = async (req, res) => {
   try {
     const clientId = process.env.GITHUB_CLIENT_ID;
@@ -75,4 +76,24 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { githubCallback, loginUser };
+const checkGithubAuth = async (req, res) => {
+  try {
+    const clerkId = getAuth(req).userId;
+    if (!clerkId) {
+      return res.status(401).json({ error: "Clerk id not found" });
+    }
+
+    const user = await User.findOne({ clerkId });
+
+    if (user) {
+      return res.status(200).json({ message: "User found." });
+    } else {
+      return res.status(401).json({ message: "User not found." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Github check failed." });
+  }
+};
+
+export { githubCallback, loginUser, checkGithubAuth };
