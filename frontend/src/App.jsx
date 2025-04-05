@@ -1,10 +1,11 @@
-function App() {
+import Landing from "./pages/Landing";
 
+function App() {
   return (
     <>
-      <h1>None</h1>
+      <Landing />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
