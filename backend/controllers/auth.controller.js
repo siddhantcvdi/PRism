@@ -49,7 +49,8 @@ const githubCallback = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    res.json({ message: "User authenticated and saved", encryptedToken, user });
+    const redirectUrl = `http://localhost:5173/dashboard`;
+    return res.redirect(redirectUrl);
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: "GitHub OAuth failed" });
