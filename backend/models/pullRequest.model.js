@@ -22,6 +22,8 @@ const pullRequestSchema = new mongoose.Schema({
     enum: ["open", "closed", "merged"], // Common PR states
     default: "open",
   },
+  diff: { type: String },
+  diffSummary: { type: String },
   createdAt: {
     type: Date,
     default: Date.now,
