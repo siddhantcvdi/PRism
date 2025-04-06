@@ -36,7 +36,7 @@ export const fetchAndProcessPullRequests = async (req, res) => {
     const decryptedToken = decrypt(githubToken); // Assuming you have a decrypt function to handle the token decryption
     
     const [owner, repoName] = repoFullName.split('/');
-    const githubApiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls?state=open&per_page=5&sort=created&direction=desc`; // Fetch latest 5 open PRs
+    const githubApiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls?state=all&per_page=5&sort=created&direction=desc`; // Fetch latest 5 open PRs
 
     const response = await axios.get(githubApiUrl, {
       headers: {
@@ -44,12 +44,26 @@ export const fetchAndProcessPullRequests = async (req, res) => {
         'Accept': 'application/vnd.github.v3+json',
       },
     });
+    console.log("Response data",response.data);
+    
 
     const fetchedPrs = response.data;
     const newPrsForRag = [];
 
     for (const fetchedPr of fetchedPrs) {
       const existingPr = await PullRequest.findOne({ githubId: fetchedPr.id });
+    
+      // Fetch commit messages for this PR
+      const commitsUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls/${fetchedPr.number}/commits`;
+      const commitsResponse = await axios.get(commitsUrl, {
+        headers: {
+          Authorization: `Bearer ${decryptedToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+    
+      const commitMessages = commitsResponse.data.map(commit => commit.commit.message);
+    
       if (!existingPr) {
         const newPullRequest = new PullRequest({
           githubId: fetchedPr.id,
@@ -58,7 +72,8 @@ export const fetchAndProcessPullRequests = async (req, res) => {
           state: fetchedPr.state,
           userId: user._id,
           repositoryId: repository._id,
-          // Add other relevant fields
+          summary: fetchedPr.body || '', // full PR description
+          commitMessages, // Save the array of commit messages
         });
         await newPullRequest.save();
         newPrsForRag.push(newPullRequest);
@@ -67,6 +82,7 @@ export const fetchAndProcessPullRequests = async (req, res) => {
         console.log(`PR already exists for ${repoFullName}: ${fetchedPr.title}`);
       }
     }
+    
 
     // TODO: Send 'newPrsForRag' to your RAG agent logic here
     if (newPrsForRag.length > 0) {
