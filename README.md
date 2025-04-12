@@ -119,7 +119,3 @@ Commit your changes with clear messages.
 Open a pull request detailing your changes.
 
 For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-Distributed under the MIT License. See LICENSE for more information.
