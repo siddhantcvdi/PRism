@@ -117,11 +117,19 @@ const PRCard = ({
         style={{ overflow: "hidden" }}
       >
         {expanded && (
-          <div className="mt-4 prose prose-invert max-w-none border-t border-gray-700 pt-3">
-            <ReactMarkdown>
-              {diffSummary?.replace(/PR_IMPORTANCE:\d+/, "").trim() || "No summary available."}
-            </ReactMarkdown>
-          </div>
+          <div className="mt-4 prose prose-invert prose-sm sm:prose-base max-w-none border-t border-gray-700 pt-4 space-y-4">
+          <ReactMarkdown
+            components={{
+              h2: ({ node, ...props }) => <h2 className="text-lg font-semibold mt-4 mb-2" {...props} />,
+              p: ({ node, ...props }) => <p className="leading-relaxed text-[#e0e0e0]" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc pl-6 space-y-1" {...props} />,
+              li: ({ node, ...props }) => <li className="text-sm text-[#e4e4e7]" {...props} />,
+            }}
+          >
+            {diffSummary?.replace(/PR_IMPORTANCE:\d+/, "").trim() || "No summary available."}
+          </ReactMarkdown>
+        </div>
+        
         )}
       </motion.div>
     </div>
