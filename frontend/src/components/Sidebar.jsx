@@ -51,7 +51,7 @@ const Sidebar = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/repo/repo-info",
+        "https://prism-backend-server.onrender.com/repo/repo-info",
         {
           repositoryLink: repoLink,
         },
@@ -79,7 +79,7 @@ const Sidebar = () => {
       const repoFullName = `${repoOwnerName}/${repoName}`;
       
       const response = await axios.post(
-        "http://localhost:3000/pr/fetch-prs",
+        "https://prism-backend-server.onrender.com/pr/fetch-prs",
         { repoFullName },
         {
           withCredentials: true,
@@ -103,7 +103,7 @@ const Sidebar = () => {
   const checkGitHubAuth = async () => {
     try {
       setIsGitHubLoading(true);
-      const res = await axios.get("http://localhost:3000/auth/check-token", {
+      const res = await axios.get("https://prism-backend-server.onrender.com/auth/check-token", {
         withCredentials: true,
       });
       setIsGitHubAuth(true);
@@ -116,7 +116,7 @@ const Sidebar = () => {
 
   const fetchRepos = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/repo/user-repo", {
+      const res = await axios.get("https://prism-backend-server.onrender.com/repo/user-repo", {
         withCredentials: true,
       });
       setRepos(res.data);
@@ -140,7 +140,7 @@ const Sidebar = () => {
   }
 
   const handleGithubLogin = () => {
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=http://localhost:3000/auth/github/callback&scope=read:user repo`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=https://prism-backend-server.onrender.com/auth/github/callback&scope=read:user repo`;
   };
 
   return (
