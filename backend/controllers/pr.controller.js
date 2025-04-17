@@ -5,6 +5,8 @@ import Repository from "../models/repository.model.js";
 import PullRequest from "../models/pullRequest.model.js";
 import { decrypt } from "../utils/crypto.js";
 
+const llmUrl = process.env.LLM_SERVICE_URL;
+
 export const fetchAndProcessPullRequests = async (req, res) => {
   try {
     const { userId: clerkId } = getAuth(req);
@@ -76,7 +78,7 @@ export const fetchAndProcessPullRequests = async (req, res) => {
 
       if (!diffSummary) {
         try {
-          const ragResponse = await axios.post("http://localhost:8000/summarize", {
+          const ragResponse = await axios.post(`${llmUrl}/summarize`, {
             diff_content: diffContent,
           });
           diffSummary = ragResponse.data.summary;
