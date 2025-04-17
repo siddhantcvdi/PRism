@@ -1,4 +1,4 @@
-Flask==3.0.3
+fastapi==0.110.2          
 uvicorn[standard]
 transformers==4.50.3
 torch==2.6.0
@@ -8,3 +8,4 @@ scikit-learn==1.6.1
 faiss-cpu==1.10.0
 google-auth==2.38.0
 google-generativeai==0.8.4
+python-dotenv           
