@@ -6,6 +6,10 @@ const pullRequestSchema = new mongoose.Schema({
     required: true,
     unique: true, // Unique GitHub identifier for the PR
   },
+  prNumber: {
+    type: Number,
+    required: true, // GitHub PR number (used in API requests)
+  },
   title: {
     type: String,
     required: true,
@@ -22,6 +26,35 @@ const pullRequestSchema = new mongoose.Schema({
     enum: ["open", "closed", "merged"], // Common PR states
     default: "open",
   },
+  diff: {
+    type: String,
+  },
+  diffSummary: {
+    type: String,
+  },
+  commitMessages: {
+    type: [String],
+    default: [],
+  },
+  additions: {
+    type: Number,
+    default: 0,
+  },
+  deletions: {
+    type: Number,
+    default: 0,
+  },
+  commits: {
+    type: Number,
+    default: 0,
+  },
+  changedFiles: {
+    type: Number,
+    default: 0,
+  },
+  summary: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -32,18 +65,15 @@ const pullRequestSchema = new mongoose.Schema({
   mergedAt: {
     type: Date,
   },
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    ref: "User",
     required: true,
   },
-  repository: {
+  repositoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Repository", // Reference to the Repository model
+    ref: "Repository",
     required: true,
-  },
-  summary: {
-    type: String,
   },
 });
 
