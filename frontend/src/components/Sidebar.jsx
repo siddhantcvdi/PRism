@@ -5,6 +5,7 @@ import { Button, Input, Modal, Spin, message } from "antd";
 import { useState } from "react";
 import axios from "axios";
 import useStore from "../../store/auth.store.js";
+import usePRStore from "../../store/prdata.store.js";
 
 const Sidebar = () => {
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -69,10 +70,12 @@ const Sidebar = () => {
     }
   };
 
+  const {setPRList} = usePRStore()
+
   const handleFetchPRs = async (repoName, repoOwnerName) => {
     try {
       const token = await getToken();
-      
+
       const repoFullName = `${repoOwnerName}/${repoName}`;
       
       const response = await axios.post(
@@ -89,6 +92,8 @@ const Sidebar = () => {
 
       message.success("PRs fetched successfully!");
       console.log("Fetched PRs:", response.data);
+      setPRList(response.data.prs)
+
     } catch (error) {
       message.error("Failed to fetch PRs");
       console.error("Error fetching PRs:", error);
