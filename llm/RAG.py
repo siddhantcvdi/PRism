@@ -69,7 +69,7 @@ def create_rag_pipeline(diff_content: str):
 
     At the end of summary add a PR importance rating from 1 to 5. No other text is needed only the integer in format - PR_IMPORTANCE:1/2/3/4/5.
 
-    Provide the summary in markdown format with clear section headers.
+    Provide the summary in markdown format with clear section headers. Each heading should be bold and add enough spacing.
 
     Code changes:
     {context}
