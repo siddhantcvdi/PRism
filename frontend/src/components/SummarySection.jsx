@@ -7,6 +7,12 @@ import PRCard from "./PRCard";
 const SummarySection = () => {
   const { PRList } = usePRStore();
 
+  // Helper to extract importance from summary
+  const extractImportance = (summary) => {
+    const match = summary?.match(/PR_IMPORTANCE:(\d)/);
+    return match ? parseInt(match[1]) : 1;
+  };
+
   return (
     <div className="w-full h-screen bg-[#1d1e30] p-3">
       <div className="w-full h-full bg-[#131420] rounded-xl flex flex-col">
@@ -31,6 +37,7 @@ const SummarySection = () => {
                 commits={pr.commits}
                 changedFiles={pr.changedFiles}
                 diffSummary={pr.diffSummary}
+                importance={extractImportance(pr.diffSummary)}
               />
             ))
           ) : (

@@ -3,6 +3,24 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 
+// Helper to style importance levels
+const getImportanceColor = (importance) => {
+  switch (importance) {
+    case 1:
+      return "#f25858"; // Red
+    case 2:
+      return "#f5a623"; // Orange
+    case 3:
+      return "#f7e500"; // Yellow
+    case 4:
+      return "#4caf50"; // Green
+    case 5:
+      return "#0d47a1"; // Blue
+    default:
+      return "#cfd1e2"; // Neutral Gray
+  }
+};
+
 const PRCard = ({
   title,
   prNumber,
@@ -11,7 +29,10 @@ const PRCard = ({
   commits,
   changedFiles,
   diffSummary,
+  importance, // new prop
 }) => {
+  console.log(importance);
+  
   const [expanded, setExpanded] = useState(false);
   const toggle = () => setExpanded((v) => !v);
 
@@ -48,7 +69,7 @@ const PRCard = ({
         </motion.div>
       </div>
 
-      {/* Stats */}
+      {/* Stats Row */}
       <div className="flex gap-4 flex-wrap mb-2">
         {[
           { label: "Additions", value: `+${additions}`, color: "#58f258" },
@@ -63,6 +84,26 @@ const PRCard = ({
             </span>
           </div>
         ))}
+
+        {/* Importance Bars */}
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-[#cfd1e2]">Importance</span>
+          <div className="flex gap-1 items-end h-5">
+            {[1, 2, 3, 4, 5].map((level) => (
+              <div
+                key={level}
+                className="w-1 rounded-sm"
+                style={{
+                  height: "80%",
+                  backgroundColor:
+                    level <= importance
+                      ? getImportanceColor(importance)
+                      : "#4a4c6a",
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Expandable Summary */}
@@ -78,7 +119,7 @@ const PRCard = ({
         {expanded && (
           <div className="mt-4 prose prose-invert max-w-none border-t border-gray-700 pt-3">
             <ReactMarkdown>
-              {diffSummary || "No summary available."}
+              {diffSummary?.replace(/PR_IMPORTANCE:\d+/, "").trim() || "No summary available."}
             </ReactMarkdown>
           </div>
         )}
